@@ -1,4 +1,3 @@
-//candid/auth.ts
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -13,6 +12,8 @@ const prisma = new PrismaClient({ adapter });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt" }, // Force JWT sessions for serverless robustness
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -20,11 +21,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-      async session({ session, token }) {
-        if (session.user && token?.sub) {
-          session.user.id = token.sub;
-        }
-        return session;
-      },
+    async session({ session, token }) {
+      if (session.user && token?.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
     },
+  },
+  secret: process.env.AUTH_SECRET,
 });
