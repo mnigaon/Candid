@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
@@ -24,7 +24,7 @@ export async function GET(
     );
 
     if (!response.ok) {
-        return NextResponse.json({ error: "Failed to fetch place details" }, { status: response.status });
+      return NextResponse.json({ error: "Failed to fetch place details" }, { status: response.status });
     }
 
     const data = await response.json();

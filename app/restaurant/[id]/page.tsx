@@ -21,7 +21,7 @@ async function getRestaurant(id: string) {
 }
 
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
   const restaurant = await getRestaurant(id);
@@ -37,7 +37,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const restaurant = await getRestaurant(id);
   const initialName = restaurant?.displayName?.text || "";
